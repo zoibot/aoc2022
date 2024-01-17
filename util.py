@@ -12,6 +12,9 @@ class Interval:
     lo: int
     hi: int
 
-    def contains(other):
-        return lo <= other.lo and hi >= other.hi
-    
+    def includes(self, n):
+        return self.lo <= n and n <= self.hi
+    def contains(self, other):
+        return self.lo <= other.lo and self.hi >= other.hi
+    def overlaps(self, other):
+        return other.includes(self.lo) or other.includes(self.hi) or self.includes(other.lo) or self.includes(other.hi)
