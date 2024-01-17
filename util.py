@@ -22,14 +22,57 @@ class Interval:
 def transpose(g):
     return [[g[j][i] for j in range(len(g))] for i in range(len(g[0]))]
 
-@dataclass #TODO
+@dataclass
+class Vec2:
+    x: int
+    y: int
+
+    def __getitem__(self, i):
+        return (self.x,self.y)[i]
+    def __hash__(self):
+        return (self.x, self.y).__hash__()
+    def __add__(self, other):
+        x, y = vec_or_tup(other)
+        return Vec2(self.x + x, self.y + y)
+    def __sub__(self, other):
+        x, y = vec_or_tup(other)
+        return Vec2(self.x - x, self.y - y)
+    def __mul__(self, n):
+        return Vec2(self.x * n, self.y * n)
+    def mag(self):
+        return math.sqrt(self.mag2())
+    def mag2(self):
+        return self.x ** 2 + self.y ** 2
+
+
+def vec_or_tup(c):
+    if isinstance(c, Vec2):
+        x, y = c.x, c.y
+    else:
+        x, y = c
+    return x, y
+
+@dataclass
 class Grid:
     cells: list
 
-def parse_grid(fname):
-    return transpose(list(lines(fname)))
+    def width(self):
+        return len(self.cells[0])
+    def height(self):
+        return len(self.cells)
+    def square(self):
+        return self.width() == self.height()
 
-def neighbors(x,y):
+    def __getitem__(self, c):
+        x, y = vec_or_tup(c)
+        return self.cells[y][x]
+
+def parse_grid(fname):
+    return Grid(list(lines(fname)))
+
+def neighbors(c):
+    x, y = vec_or_tup(c)
     return [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
-def bounded_neighbors(x,y,xmax,ymax):
-    return [(x1,y1) for (x1,y1) in neighbors(x,y) if x >= 0 and x <= xmax and y >= 0 and y <= ymax]
+def bounded_neighbors(c, cmax):
+    xmax, ymax = vec_or_tup(cmax)
+    return [(x1,y1) for (x1,y1) in neighbors(c) if x >= 0 and x <= xmax and y >= 0 and y <= ymax]
