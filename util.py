@@ -1,7 +1,13 @@
 import itertools
 from dataclasses import dataclass
 
-def lines(fname):
+def init(f):
+    global file
+    file = f
+
+def lines(fname=None):
+    global file
+    fname = file if fname is None else fname
     return (line.strip() for line in open(fname).readlines())
 
 def groupby(l, n):
