@@ -2,13 +2,18 @@ import itertools
 from dataclasses import dataclass
 
 def init(f):
-    global file
-    file = f
+    global filen
+    filen = f
+
+def file(fname=None):
+    fname = filen if fname is None else fname
+    return open(fname)
+
+def read(fname=None):
+    return file(fname).read()
 
 def lines(fname=None):
-    global file
-    fname = file if fname is None else fname
-    return (line.strip() for line in open(fname).readlines())
+    return (line.strip() for line in file(fname).readlines())
 
 def groupby(l, n):
     return iter(lambda: list(itertools.islice(iter(l), n)), [])
