@@ -66,9 +66,23 @@ class Grid:
         return len(self.cells[0])
     def height(self):
         return len(self.cells)
+    def size(self):
+        return (self.width(), self.height())
     def square(self):
         return self.width() == self.height()
+    
+    def find(self, cell):
+        for y, r in enumerate(self.cells):
+            for x, c in enumerate(r):
+                if c == cell:
+                    return (x,y)
 
+    def findall(self, cell):
+        for y, r in enumerate(self.cells):
+            for x, c in enumerate(r):
+                if c == cell:
+                    yield (x,y)
+    
     def __getitem__(self, c):
         x, y = vec_or_tup(c)
         return self.cells[y][x]
@@ -81,4 +95,4 @@ def neighbors(c):
     return [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]
 def bounded_neighbors(c, cmax):
     xmax, ymax = vec_or_tup(cmax)
-    return [(x1,y1) for (x1,y1) in neighbors(c) if x >= 0 and x <= xmax and y >= 0 and y <= ymax]
+    return [(x,y) for (x,y) in neighbors(c) if x >= 0 and x < xmax and y >= 0 and y < ymax]
