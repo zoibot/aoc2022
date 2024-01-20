@@ -18,6 +18,24 @@ def lines(fname=None):
 def groupby(l, n):
     return iter(lambda: list(itertools.islice(iter(l), n)), [])
 
+def line(start, end):
+    x0, y0 = vec_or_tup(start)
+    x1, y1 = vec_or_tup(end)
+    if x0 == x1:
+        for y in drange(y0, y1):
+            yield Vec2(x0, y)
+    elif y0 == y1:
+        for x in drange(x0, x1):
+            yield Vec2(x, y0)
+    else:
+        throw('no diagonal')
+
+def drange(start, end):
+    if start < end:
+        return range(start, end+1)
+    if end < start:
+        return range(start, end-1, -1)
+
 @dataclass
 class Interval:
     lo: int
