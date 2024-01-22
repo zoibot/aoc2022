@@ -47,6 +47,38 @@ class Interval:
         return self.lo <= other.lo and self.hi >= other.hi
     def overlaps(self, other):
         return other.includes(self.lo) or other.includes(self.hi) or self.includes(other.lo) or self.includes(other.hi)
+    def merge(self, other):
+        return Interval(min(self.lo, other.lo), max(self.hi, other.hi))
+
+@dataclass
+class IntervalSet:
+    intervals: [Interval]
+
+    def add(self, new):
+        new_intervals = []
+        adding = new
+        for interval in self.intervals:
+            if adding is None:
+                new_intervals.append(interval)
+            elif adding.overlaps(interval):
+                adding = adding.merge(interval)
+            elif adding.hi < interval.lo:
+                new_intervals.append(adding)
+                new_intervals.append(interval)
+                adding = None
+            elif adding.lo > interval.hi:
+                new_intervals.append(interval)
+        if adding is not None:
+            new_intervals.append(adding)
+        self.intervals = new_intervals
+    
+    def includes(self, n):
+        return any(i.includes(n) for i in self.intervals)
+    def contains(self, interval):
+        return any(i.contains(interval) for i in self.intervals)
+
+
+
 
 def transpose(g):
     return [[g[j][i] for j in range(len(g))] for i in range(len(g[0]))]
@@ -72,6 +104,8 @@ class Vec2:
         return math.sqrt(self.mag2())
     def mag2(self):
         return self.x ** 2 + self.y ** 2
+    def manhattan(self):
+        return abs(self.x) + abs(self.y)
 
 
 def vec_or_tup(c):
